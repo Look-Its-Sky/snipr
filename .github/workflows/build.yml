@@ -1,0 +1,33 @@
+name: Build Stable
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build_bins:
+    name: Build Binaries 
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: [amd64, arm64] 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Go Setup 
+        uses: actions/setup-go@v5
+
+      - name: Build Binaries
+        run: |
+          go build -v -o snipr-${{ matrix.goos }}-${{ matrix.goarch }} .
+      
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: snipr-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: snipr-${{ matrix.goos }}-${{ matrix.goarch }}

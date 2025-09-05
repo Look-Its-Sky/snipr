@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"flag"
 
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -12,6 +13,9 @@ import (
 )
 
 func main() {
+	flag.Parse()
+	initDB()
+
 	wsNodeURL := os.Getenv("NODE_URL_WSS")
 	if wsNodeURL == "" {
 		log.Fatalln("NODE_URL environment variable is not set. This should be your WebSocket endpoint (e.g., wss://...). ")
@@ -60,11 +64,13 @@ func main() {
 			}
 
 			// New block
-			log.Println("----------------------------------------")
-			log.Printf("📦 New Block!\n")
-			log.Printf("- Number: %s\n", header.Number.String())
-			log.Printf("- Hash: %s\n", header.Hash().Hex())
-			log.Printf("- Miner: %s\n", header.Coinbase.Hex())
+			if *verbose {
+				log.Println("----------------------------------------")
+				log.Printf("📦 New Block!\n")
+				log.Printf("- Number: %s\n", header.Number.String())
+				log.Printf("- Hash: %s\n", header.Hash().Hex())
+				log.Printf("- Miner: %s\n", header.Coinbase.Hex())
+			}
 
 			// Scrape block for each transaction
 			for _, tx := range block.Transactions() {

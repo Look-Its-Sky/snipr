@@ -11,7 +11,12 @@ import (
 
 var db *gorm.DB 
 
-func init() {
+func initDB() {
+	if *disableDB { 
+		log.Println("Database disabled, skipping connection.")
+		return
+	}
+
 	// Initial connection
 	host := os.Getenv("DB_HOST")  
 	port := os.Getenv("DB_PORT") 
@@ -41,7 +46,7 @@ func pushNew(c Contract) {
 	if result.Error != nil {
 		log.Printf("Error pushing contract to db: %v", result.Error)
 	} else {
-		log.Printf("Pushed %s to db", c.ContractAddress)
+		if *verbose { log.Printf("Pushed %s to db", c.ContractAddress) }
 	}
 
 	// fmt.Printf("%#v\n", c)

@@ -176,9 +176,11 @@ func newCallMsg(to common.Address, data []byte) ethereum.CallMsg {
 }
 
 func scrape(tx *types.Transaction, ethClient *ethclient.Client, rpcClient *rpc.Client) {
-	log.Println("----------------------------------------")
-	log.Printf("🔍 Analyzing transaction: %s\n", tx.Hash())
-	log.Println("----------------------------------------")
+	if *verbose {
+		log.Println("----------------------------------------")
+		log.Printf("🔍 Analyzing transaction: %s\n", tx.Hash())
+		log.Println("----------------------------------------")
+	}
 
 	txHash := tx.Hash()
 
@@ -189,7 +191,7 @@ func scrape(tx *types.Transaction, ethClient *ethclient.Client, rpcClient *rpc.C
 	}
 
 	if len(contracts) == 0 {
-		log.Println("No new contracts were created in this transaction.")
+		if *verbose { log.Println("No new contracts were created in this transaction.") }
 		return
 	}
 
@@ -216,10 +218,12 @@ func scrape(tx *types.Transaction, ethClient *ethclient.Client, rpcClient *rpc.C
 			continue
 		}
 
-		log.Printf("    - Name: %s\n", tokenDetails.Name)
-		log.Printf("    - Symbol: %s\n", tokenDetails.Symbol)
-		log.Printf("    - Total Supply: %s\n", tokenDetails.TotalSupply.String())
-		log.Printf("    - Decimals: %d\n", tokenDetails.Decimals)
+		if *verbose {
+			log.Printf("    - Name: %s\n", tokenDetails.Name)
+			log.Printf("    - Symbol: %s\n", tokenDetails.Symbol)
+			log.Printf("    - Total Supply: %s\n", tokenDetails.TotalSupply.String())
+			log.Printf("    - Decimals: %d\n", tokenDetails.Decimals)
+		}
 
 		// Get additional details for the Contract struct
 		receipt, err := ethClient.TransactionReceipt(context.Background(), txHash)
@@ -252,6 +256,7 @@ func scrape(tx *types.Transaction, ethClient *ethclient.Client, rpcClient *rpc.C
 			Decimals:        tokenDetails.Decimals,
 			Blacklisted:     false,
 		}
-		pushNew(c)
+
+		if !*disableDB { pushNew(c) }
 	}
 }

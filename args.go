@@ -2,14 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 )
 
-var disableDB *bool
-var verbose *bool
-
-func init() {
-	disableDB = flag.Bool("disable_db", false, "Disable database")
-
-	fmt.Println(*disableDB)
-}
+var disableDB *bool = flag.Bool("disable_db", false, "Disable database")
+var verbose *bool = flag.Bool("verbose", false, "Enable verbose output")

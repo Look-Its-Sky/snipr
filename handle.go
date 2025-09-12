@@ -18,7 +18,6 @@ import (
 
 func listenForPools(exchange *schemas.Exchange, wg *sync.WaitGroup, client *ethclient.Client) {
 	defer wg.Done()
-	log.Printf("Connecting to exchange at %s via WebSocket (%s)", exchange.Address, exchange.WssURL)
 
 	contractAddress := common.HexToAddress(exchange.Address)
 	query := ethereum.FilterQuery{
@@ -51,7 +50,7 @@ func listenForPools(exchange *schemas.Exchange, wg *sync.WaitGroup, client *ethc
 	}
 
 	eventID := contractAbi.Events[eventName].ID
-	log.Printf("Listening for %s events on %s", eventName, exchange.Address)
+	log.Printf("Listening for %s events on contract: %s", eventName, exchange.Address)
 
 	for {
 		select {
@@ -60,10 +59,22 @@ func listenForPools(exchange *schemas.Exchange, wg *sync.WaitGroup, client *ethc
 			return
 
 		case vLog := <-logs:
-			if len(vLog.Topics) > 0 && vLog.Topics[0] == eventID {
-				exchange.Process(vLog, contractAbi, eventName)
+			if !(len(vLog.Topics) > 0 && vLog.Topics[0] == eventID) { 
+				time.Sleep(5000 * time.Millisecond) // NOTE: Avoid rate limiting
+				return 
 			}
-			time.Sleep(5000 * time.Millisecond) // Avoid rate limiting
+
+			contract, err := exchange.Process(vLog, contractAbi, eventName)
+			if err != nil { 
+				log.Printf("Error processing log for exchange %s: %v", exchange.Address, err) 
+				return
+			}
+
+			if !*disableDB { 
+				pushNewContract(contract) 
+			}
+
+			time.Sleep(5000 * time.Millisecond) // NOTE: Avoid rate limiting
 		}
 	}
 }

@@ -7,7 +7,7 @@ import (
 
 type Exchange struct {
 	Address 		string 
-	ABI  			string
+	ABI  			  string
 	WssURL  		string
 	HttpURL 		string
 	Process			func(vLog types.Log, contractAbi abi.ABI, eventName string) (*Contract, error)

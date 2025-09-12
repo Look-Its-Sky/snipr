@@ -2,7 +2,7 @@ package dex
 
 import (
 	"log"
-	"math/big"
+	// "math/big"
 
 	"snipr/schemas"
 
@@ -17,17 +17,17 @@ func UniswapV3(disableDB *bool) *schemas.Exchange {
 		created_coin := common.HexToAddress(vLog.Topics[1].Hex())
 		backing_coin := common.HexToAddress(vLog.Topics[2].Hex())
 
-		// Used for validation
-		var pairCreated struct {
-			Pair           common.Address
-			AllPairsLength *big.Int
-		}
-
-		err := contractAbi.UnpackIntoInterface(&pairCreated, eventName, vLog.Data)
-		if err != nil {
-			log.Printf("Uniswap V3: Failed to unpack PairCreated event data: %v", err)
-			return nil, err
-		}
+		// // Used for validation
+		// var pairCreated struct {
+		// 	Pair           common.Address
+		// 	AllPairsLength *big.Int
+		// }
+		//
+		// err := contractAbi.UnpackIntoInterface(&pairCreated, eventName, vLog.Data)
+		// if err != nil {
+		// 	log.Printf("Uniswap V3: Failed to unpack PairCreated event data: %v", err)
+		// 	return nil, err
+		// }
 
 		log.Printf("Token created on Uniswap V3 -\nCreated Coin: %s\nBacking Coin: %s\n",
 			created_coin.Hex(),

@@ -5,6 +5,8 @@ import (
 	"os"
 	"fmt"
 
+	"snipr/schemas"
+
 	"gorm.io/gorm"
 	"gorm.io/driver/postgres"
 )
@@ -12,11 +14,6 @@ import (
 var db *gorm.DB 
 
 func initDB() {
-	if *disableDB { 
-		log.Println("Database disabled, skipping connection.")
-		return
-	}
-
 	// Initial connection
 	host := os.Getenv("DB_HOST")  
 	port := os.Getenv("DB_PORT") 
@@ -33,7 +30,7 @@ func initDB() {
 		log.Fatalf("Failed to connect to database!\n %v", err)
 	}
 
-	err = db.AutoMigrate(&Contract{})
+	err = db.AutoMigrate(&schemas.Contract{})
 	if err != nil {
 		log.Fatalf("Failed to migrate database!\n %v", err)
 	}
@@ -41,14 +38,11 @@ func initDB() {
 	log.Println("Connection to database was successful!")
 }
 
-func pushNew(c Contract) {
-	result := db.Create(&c)
+func pushNew(c *schemas.Contract) {
+	result := db.Create(c)
 	if result.Error != nil {
 		log.Printf("Error pushing contract to db: %v", result.Error)
 	} else {
-		if *verbose { log.Printf("Pushed %s to db", c.ContractAddress) }
+		if *verbose { log.Printf("Pushed %s to db", c.Address) }
 	}
-
-	// fmt.Printf("%#v\n", c)
-	// panic("STOP")
 }

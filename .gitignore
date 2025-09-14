@@ -2,3 +2,4 @@ env.sh
 snipr
 .env
 scripts
+*.tar

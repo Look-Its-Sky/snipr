@@ -2,7 +2,7 @@ package dex
 
 import (
 	"log"
-	// "math/big"
+	_ "math/big"
 
 	"snipr/schemas"
 

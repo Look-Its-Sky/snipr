@@ -17,7 +17,7 @@ func main() {
 	exchanges := []*schemas.Exchange{
 		dex.UniswapV2(disableDB),
 		dex.UniswapV3(disableDB),
-		// dex.UniswapV4(disableDB),
+		dex.UniswapV4(disableDB),
 	}
 
 	var wg sync.WaitGroup

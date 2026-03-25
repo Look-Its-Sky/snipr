@@ -30,28 +30,22 @@ func listenForPools(exchange *schemas.Exchange, wg *sync.WaitGroup, client *ethc
 		return
 	}
 
-	// determine platform
 	var eventName string
-	var platform string
-
 	if _, ok := contractAbi.Events["PairCreated"]; ok {
 		eventName = "PairCreated" // Uniswap V2
-		platform = "Uniswap V2"
 	} else if _, ok := contractAbi.Events["PoolCreated"]; ok {
 		eventName = "PoolCreated" // Uniswap V3
-		platform = "Uniswap V3"
 	} else if _, ok := contractAbi.Events["Initialize"]; ok {
 		eventName = "Initialize" // Uniswap V4
-		platform = "Uniswap V4"
 	} else {
 		log.Printf("No 'PoolCreated' or 'PairCreated' event found in ABI for %s", exchange.Address)
 		return
 	}
 
 	eventID := contractAbi.Events[eventName].ID
-	log.Printf("%s: Listening for %s events on contract: %s", platform, eventName, exchange.Address)
+	log.Printf("Listening for %s events on contract: %s", eventName, exchange.Address)
 
-	// WSS Reconnection Loop
+	// wss reconnection loop
 	for {
 		logs := make(chan types.Log)
 		sub, err := client.SubscribeFilterLogs(context.Background(), query, logs)

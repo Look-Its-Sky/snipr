@@ -49,12 +49,15 @@ func UniswapV4(disableDB *bool) *schemas.Exchange {
 		c := schemas.Contract{
 			Address:            currency0.Hex(), // new token
 			BackingCoinAddress: currency1.Hex(), // backing coin
+			Exchange:						"UniswapV4",
+			BlockNumber:				vLog.BlockNumber,
 		}
 
 		return &c, nil
 	}
 
 	return &schemas.Exchange{
+		Name: "UniswapV4",
 		Address: "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df", 
 		
 		// Lightweight ABI containing ONLY the 'Initialize' event

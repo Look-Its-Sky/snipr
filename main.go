@@ -11,13 +11,22 @@ import (
 
 func main() {
 	flag.Parse()
-	if *disableDB { log.Println("Database disabled, skipping connection.") } else { initDB() }
+
+	if *disableDB { 
+		log.Println("Database disabled, skipping connection.") 
+	} else { 
+		initDB() 
+	}
+
 	client := auth()
 
 	exchanges := []*schemas.Exchange{
 		dex.UniswapV2(disableDB),
 		dex.UniswapV3(disableDB),
 		dex.UniswapV4(disableDB),
+		dex.PancakeSwapV2(disableDB), // TODO: check this implementation 
+		dex.PancakeSwapV3(disableDB), // TODO: check this implementation
+		// TODO: add PancakeSwapV4
 	}
 
 	var wg sync.WaitGroup

@@ -6,6 +6,7 @@ import (
 )
 
 type Exchange struct {
+	Name				string
 	Address 		string 
 	ABI  			  string
 	WssURL  		string
